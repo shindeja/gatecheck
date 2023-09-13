@@ -1,0 +1,93 @@
+{   
+    "ECSResourceReadAccess" :
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ecs:ListTagsForResource",
+                    "ecs:ListTasks",
+                    "ecs:DescribeServices",
+                    "ecs:DescribeTasks",
+                    "ecs:DescribeClusters"
+                ],
+                "Resource": [
+                    "arn:aws:ecs:*:<AWS_ACCOUNT_ID>:container-instance/*/*",
+                    "arn:aws:ecs:*:<AWS_ACCOUNT_ID>:task/*/*",
+                    "arn:aws:ecs:*:<AWS_ACCOUNT_ID>:service/*/*",
+                    "arn:aws:ecs:<AWS_REGION>:<AWS_ACCOUNT_ID>:cluster/*",
+                    "arn:aws:ecs:*:<AWS_ACCOUNT_ID>:task-definition/*:*"
+                ]
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ecs:ListServices",
+                    "ecs:ListTaskDefinitionFamilies",
+                    "ecs:ListTaskDefinitions",
+                    "ecs:DescribeTaskDefinition",
+                    "ecs:ListClusters"
+                ],
+                "Resource": "*"
+            }
+        ]
+    },
+
+    "CloudWatchLogsAccess":
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "logs:CreateLogGroup",
+                "Resource": "arn:aws:logs:*:<AWS_ACCOUNT_ID>:*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                ],
+                "Resource": [
+                    "arn:aws:logs:*:<AWS_ACCOUNT_ID>:log-group:/aws/lambda/*"
+                ]
+            }
+        ]
+    },
+
+    "NetworkingResourcesReadAccess":
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ec2:DescribeRouteTables",
+                    "ec2:DescribeSecurityGroupRules",
+                    "ec2:DescribeSecurityGroups",
+                    "ec2:DescribeNetworkInterfaces",
+                    "ec2:DescribeNetworkInterfaceAttribute"
+                ],
+                "Resource": "*"
+            }
+        ]
+    },
+
+    "SSMReadOnlyAccess":
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ssm:Describe*",
+                    "ssm:Get*",
+                    "ssm:List*"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+
+}

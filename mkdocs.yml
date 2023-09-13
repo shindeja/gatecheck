@@ -9,6 +9,7 @@ nav:
   - Home: index.md
   - Overview: overview.md
   - Policy: policy.md
+  - Alert: alert.md
 
 theme:
   name: material

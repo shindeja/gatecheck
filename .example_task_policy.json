@@ -1,0 +1,45 @@
+{
+    "task": [
+        {
+            "attribute": "subnet",
+            "allowed_values": [
+                "private"
+            ],
+            "type": "exact",
+            "action": "alert"
+        },
+        {
+            "attribute": "ip",
+            "allowed_values": [
+                "private"
+            ],
+            "type": "exact",
+            "action": "alert"
+        },
+        {
+            "attribute": "image",
+            "allowed_values": [
+                ".*.dkr.ecr.*.amazonaws.com/*"
+            ],
+            "type": "pattern",
+            "action": "alert"
+        },
+        {
+            "attribute": "enableExecuteCommand",
+            "allowed_values": [
+                false
+            ],
+            "type": "exact",
+            "action": "alert"
+        },
+        {
+            "attribute": "cpu",
+            "allowed_values": [
+                256,
+                1024
+            ],
+            "type": "range",
+            "action": "alert"
+        }
+    ]
+}

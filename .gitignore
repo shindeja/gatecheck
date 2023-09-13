@@ -5,7 +5,10 @@ __pycache__
 specctl.egg-info
 *.csv
 *.txt
-*.json
+task_policy.json
+lambda_iam_policy.json
+samconfig.toml
+template.yaml
 *.tfvars
 *.zip
 build/
