@@ -41,8 +41,3 @@ class PolicyCheck(object):
     def __repr__(self):
         return self.__str__()
     
-""" 
-pc = PolicyCheck("abcduuidarn", "subnet", "public", ["private"], "exact")
-if not pc.check():
-    print("Policy violation found. %s"%(pc))
-"""

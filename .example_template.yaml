@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  gatecheck
+
+  Sample SAM Template for gatecheck
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  GateCheckFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: gatecheck
+      Handler: gate_check.lambda_handler
+      Runtime: python3.10
+      Role: <GATECHECK_IAM_ROLE>
+      Environment:
+        Variables: 
+          PARAMETERS_SECRETS_EXTENSION_HTTP_PORT: 2773
+          TASK_POLICY_SSM: <GATECHECK_TASK_POLICY_SSM_PARAMETER>
+          ALERT_WEBHOOK: <GATECHECK_ALERT_WEBHOOK>
+          ALERT_KEY: <GATECHECK_ALERT_KEY>
+      Architectures:
+      - <GATECHECK_ARCHITECTURE>
+      Layers:
+        - <GATECHECK_SSM_LAMBDA_EXTENSION>
+      Events:
+        ECSTaskCreateEvent:
+          Type: EventBridgeRule # More info about CloudWatchEvent Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#cloudwatchevent
+          Properties:
+            Pattern:
+              source:
+              - aws.ecs
+              detail-type:
+              - ECS Task State Change
+              detail:
+                desiredStatus:
+                - RUNNING
+                lastStatus:
+                - PROVISIONING
+            
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  GateCheckFunction:
+    Description: Gate Check Lambda Function ARN
+    Value: !GetAtt GateCheckFunction.Arn

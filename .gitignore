@@ -11,6 +11,7 @@ specctl.egg-info
 build/
 plan.out
 plan.out.json
+.aws-sam/*
 
 # Local .terraform directories
 .terraform/

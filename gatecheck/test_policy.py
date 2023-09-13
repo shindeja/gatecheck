@@ -5,19 +5,19 @@ policy = {
             "attribute": "subnet",
             "allowed_values": ["private"],
             "type": "exact",
-            "action": "terminate"
+            "action": "alert"
         },
         {
             "attribute": "ip",
             "allowed_values": ["private"],
             "type": "exact",
-            "action": "terminate"
+            "action": "alert"
         },
         {
             "attribute": "image",
-            "allowed_values": ["foo/*", "bar.us-west-2.*"],
+            "allowed_values": [".*.dkr.ecr.*.amazonaws.com/*"],
             "type": "pattern",
-            "action": "terminate"
+            "action": "alert"
         },
         {
             "attribute": "enableExecuteCommand",
@@ -29,9 +29,10 @@ policy = {
             "attribute": "cpu",
             "allowed_values": [256, 4096],
             "type": "range",
-            "action": "terminate"
+            "action": "alert"
         }
     ],
     "service": []
 }
 
+print(json.dumps(policy))
