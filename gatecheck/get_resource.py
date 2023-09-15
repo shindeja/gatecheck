@@ -50,6 +50,42 @@ def get_ecs_task_definition(region_name, task_def_arn):
     task_definitions = response.get("taskDefinition", {})
     return (task_definitions)
 
+def get_subnet(region_name, subnet_id):
+    subnets = []
+    client = boto3.client("ec2", config=Config(region_name=region_name))
+    try:
+        response = client.describe_subnets(
+            SubnetIds = [
+                subnet_id,
+            ]
+        )
+    except botocore.exceptions.ClientError as e:
+        logger.error(e)
+        return (subnets)
+    subnets = response.get("Subnets", [])
+    return (subnets)
+
+def get_main_route_table(region_name, vpc_id):
+    route_tables = []
+    client = boto3.client("ec2", config=Config(region_name=region_name))
+    try:
+        response = client.describe_route_tables(
+            Filters=[
+                {
+                    'Name': 'vpc-id',
+                    'Values': [
+                        vpc_id,
+                    ]
+                },
+            ]
+        )
+    except botocore.exceptions.ClientError as e:
+        logger.error(e)
+        return (route_tables)
+    
+    route_tables = response.get("RouteTables", [])
+    return (route_tables)
+
 def get_route_tables(region_name, subnet_id):
     route_tables = []
     client = boto3.client("ec2", config=Config(region_name=region_name))
@@ -67,7 +103,10 @@ def get_route_tables(region_name, subnet_id):
     except botocore.exceptions.ClientError as e:
         logger.error(e)
         return (route_tables)
+    
     route_tables = response.get("RouteTables", [])
+    if len(route_tables) == 0:
+        return (route_tables)
     return (route_tables)
 
 def get_network_interfaces(region_name, network_interface_ids):

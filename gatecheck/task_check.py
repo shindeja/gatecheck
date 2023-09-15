@@ -18,8 +18,22 @@ def get_subnet_type(region_name, subnet_id):
     subnet_type = "private"
     route_tables = get_resource.get_route_tables(region_name, subnet_id)
     if len(route_tables) <= 0:
+        # then the subnet is implicitly associated to VPC main route table
+        subnet_detail = get_resource.get_subnet(region_name, subnet_id)
+        if len(subnet_detail) <= 0:
+            logger.info("No subnet found for subnet {} in region {}. Skipping".format(subnet_id, region_name))
+            return subnet_type
+        
+        vpc_id = subnet_detail[0].get('VpcId', '')
+        if len(vpc_id) <= 0:
+            logger.info("No VPC found for subnet {} in region {}. Skipping".format(subnet_id, region_name))
+            return subnet_type
+        route_tables = get_resource.get_main_route_table(region_name, vpc_id)
+    
+    if len(route_tables) <= 0:
         logger.info("No route table found for subnet {} in region {}. Skipping".format(subnet_id, region_name))
         return subnet_type
+    
     for route_table in route_tables:
         routes = route_table.get('Routes', [])
         if len(routes) <= 0:
