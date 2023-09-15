@@ -157,7 +157,7 @@ def enforce_task_policy(region_name, policy, task, task_definition):
     task_definition_arn = task_definition.get('taskDefinitionArn', '')
     alert_violations = []
     terminate_violations = []
-    logger.warning("Enforcing task policy for task {} and task definition {}".format(task_arn, task_definition_arn))
+    logger.info("Enforcing task policy for task {} and task definition {}".format(task_arn, task_definition_arn))
     
     for p in policy:
         attribute = p.get('attribute', '')

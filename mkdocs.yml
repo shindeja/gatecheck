@@ -6,7 +6,7 @@ site_url: 'https://arvindsoni80.github.io/gatecheck'
 repo_name: 'gatecheck'
 repo_url: 'https://github.com/arvindsoni80/gatecheck'
 nav:
-  - Home: index.md
+  - Quick Start: index.md
   - Architecture: architecture.md
   - Policy: policy.md
   - Alert: alert.md

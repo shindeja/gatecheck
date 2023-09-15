@@ -78,17 +78,14 @@ sam deploy
 
 If everything is deployed correctly you will see the Lambda function named `gatecheck` in console under AWS Lambda service and you will see an EventBridge rule named `ecs-task-create` in Amazon EventBridge service.
 
-Let us test the Gatecheck application by creating an ECS task that violates the test policy that we are using. 
+### Testing 
+If you alreayd have an ECS cluster you can test Gatecheck simply by creating an ECS task. If you don't have an ECS cluster then you can use [AWS Copilot CLI](https://aws.github.io/copilot-cli/) to quickly setup an environment and launch ECS tasks. 
 
-```bash
-#create a task definition
-#create a task using run-task
-```
-In AWS console, go to Lambda service and click on gatecheck. In the monitor section click on CloudWatch logs and you will see the policy violations such as below in the log file. 
-[Policy violation log image]
+Once ECS tasks are created you can check the policy violations (if any) in the AWS console. Go to Lambda service and click on `gatecheck*` function. In the Monitor section click on CloudWatch logs and you will see the policy violations such as below in the log file. 
+![Policy violation log image](./docs/policy-violation-log.png)
 
 ### Clean up
-To remove gatecheck, SSM Parameter, IAM policies, ECS task, and ECS task-definition that we created above use the commands below. 
+Use the commands below to remove Gatecheck deployed stack, SSM Parameter, and IAM policies that we just created.
 
 ```bash
 sam delete
