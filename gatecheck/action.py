@@ -12,7 +12,12 @@ def http_post_to_webhook(data):
         return
     alert_data = {alert_key: data}
     headers = {'Content-Type': 'application/json'}
-    r = requests.post(url, json=alert_data, headers=headers)
+    try:
+        r = requests.post(url, json=alert_data, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logger.error("Webhook post failed {}".format(e))
+        return
+    
     logger.info("Webhook post status {}".format(r.status_code))
     return
 
