@@ -7,9 +7,24 @@ from botocore.config import Config
 import click
 from dotenv import load_dotenv
 
+def delete_iam_policy_and_role(iam_role_arn):
+    role_name = iam_role_arn.split('/')[-1]
+    iam = boto3.client('iam')
+    response = iam.list_role_policies(RoleName=role_name)
+    for policy in response.get('PolicyNames',[]):
+        print(f"Deleting policy {policy}")
+        resp = iam.delete_role_policy(RoleName=role_name, PolicyName=policy)
+    print(f"Deleting role {role_name}")
+    resp = iam.delete_role(RoleName=role_name)
+
+def delete_ssm_parameter(region, name):
+    ssm = boto3.client('ssm', config=Config(region_name=region))
+    print(f"Deleting SSM parameter {name}")
+    ssm.delete_parameter(Name=name)
+
 def append_to_env_file(env_file, key, value):
     with open(env_file, "a") as f:
-        f.write(f"export {key}={value}\n")
+        f.write(f"{key}={value}\n")
 
 def create_iam_role(iam_policy_file, role_name):
     lambda_trust_policy = {
@@ -150,7 +165,22 @@ def sam(env_file, template_file):
         with open("template.yaml", "w") as tf:
             tf.write(data)
             print("Wrote template.yaml")
-    
+
+@prereq.command()
+@click.option('-e','--env_file', default='.env', help='Path to env file')
+def cleanup(env_file):
+    if not os.path.isfile(env_file):
+        print(f"File {env_file} does not exist")
+        sys.exit(1)
+    load_dotenv()
+    req_input = [ "GATECHECK_IAM_ROLE", "GATECHECK_TASK_POLICY_SSM_PARAMETER", "AWS_REGION"]
+    for k in req_input:
+        if not os.getenv(k):
+            print(f"Environment variable {k} is not set in {env_file}")
+            sys.exit(1)
+    delete_iam_policy_and_role(os.getenv("GATECHECK_IAM_ROLE"))
+    delete_ssm_parameter(os.getenv("AWS_REGION"), os.getenv("GATECHECK_TASK_POLICY_SSM_PARAMETER"))
+
 
 if __name__ == '__main__':
     prereq()

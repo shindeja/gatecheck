@@ -1,5 +1,5 @@
 # Gatecheck Policies
-Gatecheck allows users to define the task check policies simply JSON objects. The policy document itself is of the form:
+Gatecheck allows users to define the task check policies as JSON objects. The policy document itself is of the form:
 ```json
 {
     "task": [ ]
@@ -13,7 +13,7 @@ The `task` key maps to an array of policy statement. Each policy statement is JS
     * `exact`: The attribute value should match exactly one of the allowed values
     * `pattern`: The allowed values will be treated as pattern and attribute value is searched in those patterns using python `re.search` method.
     * `range`: The attribute value should be between the min and max value of the allowed values. For e.g. you can specify that the Fargate task `cpu`` should be between [256, 1024] which will allow 512 but will report violation for 2048.
-* **action**: Currently, the only supported action is `alert`. You can configure a webhook to post alert. [See Slack alert](./slack.md). All violations are logged to CloudWatch log associated with the Gatecheck Lambda function.
+* **action**: Currently, the only supported action is `alert`. You can configure a webhook to post [alert](./alert.md). All violations are logged to CloudWatch log associated with the Gatecheck Lambda function.
 
 Below are some sample policy statements.
 ```json
@@ -50,10 +50,10 @@ There are several task attributes that are nested in multiple other attributes b
 | `image`           | strings or patterns | The container images used in task |
 
 
-A sample policy JSON file is available at [.example_task_policy.json](../example_task_policy.json)
+A sample policy JSON file is available at [.example_task_policy.json](https://github.com/arvindsoni80/gatecheck/blob/main/.example_task_policy.json)
 
 ## Storing and using policies
-Gatecheck fetches the policy from SSM Parameter Store. You can store the task policy in SSM Parameter store and then set the environment variable `TASK_POLICY_SSM` for Gatecheck Lambda function. You an see in the [.example_template.yaml](../.example_template.yaml) file of how SAM creates this.
+Gatecheck fetches the policy from SSM Parameter Store. You can store the task policy in SSM Parameter store and then set the environment variable `TASK_POLICY_SSM` for Gatecheck Lambda function. You an see in the [.example_template.yaml](https://github.com/arvindsoni80/gatecheck/blob/main/.example_template.yaml) file of how SAM creates this.
 
 If you are wondering how to store the JSON as a string to SSM Parameter store, then one simple approach is to use Python code below:
 

@@ -54,7 +54,7 @@ python3 prereq.py iam -f lambda_iam_policy.json -n gatecheck-lambda-iam-role
 python3 prereq.py ssm -f task_policy.json -n ecs-task-policy -r $AWS_REGION
 python3 prereq.py extension -f ssm-lambda-extensions.json -a x86_64 -r $AWS_REGION
 ```
- The above `prereq` commands create and store values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they lingering values.
+ The above `prereq` commands create and store values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they have old values.
 
 ```bash
 unset GATECHECK_IAM_ROLE
@@ -91,7 +91,8 @@ In AWS console, go to Lambda service and click on gatecheck. In the monitor sect
 To remove gatecheck, SSM Parameter, IAM policies, ECS task, and ECS task-definition that we created above use the commands below. 
 
 ```bash
-Clean up commands
+sam delete
+python3 prereq.py cleanup
 ```
 
 
