@@ -45,7 +45,7 @@ sed -e "s/<AWS_ACCOUNT_ID>/$AWS_ACCOUNT_ID/g" \
 
 cp .example_task_policy.json task_policy.json
 ```
-We have included a utility called `prereq.py` which uses `boto3` to create the IAM role for Gatecheck function and to create SSM parameter for storing the task policy. 
+We have included a utility called `prereq.py` which uses `boto3` to create the IAM role for Gatecheck function and to create SSM parameter for storing the task policy. The script stores the output values in `.env` file.
 
 ```bash
 rm .env

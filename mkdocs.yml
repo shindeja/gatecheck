@@ -7,7 +7,7 @@ repo_name: 'gatecheck'
 repo_url: 'https://github.com/arvindsoni80/gatecheck'
 nav:
   - Home: index.md
-  - Overview: overview.md
+  - Architecture: architecture.md
   - Policy: policy.md
   - Alert: alert.md
 

@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import boto3
+import botocore
 import random
 from botocore.config import Config
 import click
@@ -10,23 +11,41 @@ from dotenv import load_dotenv
 def delete_iam_policy_and_role(iam_role_arn):
     role_name = iam_role_arn.split('/')[-1]
     iam = boto3.client('iam')
-    response = iam.list_role_policies(RoleName=role_name)
+    try:
+        response = iam.list_role_policies(RoleName=role_name)
+    except botocore.exceptions.ClientError as e:
+        print(e)
+        return
     for policy in response.get('PolicyNames',[]):
         print(f"Deleting policy {policy}")
-        resp = iam.delete_role_policy(RoleName=role_name, PolicyName=policy)
+        try:
+            resp = iam.delete_role_policy(RoleName=role_name, PolicyName=policy)
+        except botocore.exceptions.ClientError as e:
+            print(e)
+            continue
     print(f"Deleting role {role_name}")
-    resp = iam.delete_role(RoleName=role_name)
+    try:
+        resp = iam.delete_role(RoleName=role_name)
+    except botocore.exceptions.ClientError as e:
+        print(e)
+    return
+    
 
 def delete_ssm_parameter(region, name):
     ssm = boto3.client('ssm', config=Config(region_name=region))
     print(f"Deleting SSM parameter {name}")
-    ssm.delete_parameter(Name=name)
+    try:
+        ssm.delete_parameter(Name=name)
+    except botocore.exceptions.ClientError as e:
+        print(e)
+    return
 
 def append_to_env_file(env_file, key, value):
     with open(env_file, "a") as f:
         f.write(f"{key}={value}\n")
 
 def create_iam_role(iam_policy_file, role_name):
+    role_arn = ""
     lambda_trust_policy = {
             "Version": "2012-10-17",
             "Statement": [
@@ -40,31 +59,44 @@ def create_iam_role(iam_policy_file, role_name):
             ]
         }
     iam = boto3.client('iam')
-    response = iam.create_role(
-        RoleName=role_name,
-        AssumeRolePolicyDocument=json.dumps(lambda_trust_policy)
-    )
+    try:
+        response = iam.create_role(
+            RoleName=role_name,
+            AssumeRolePolicyDocument=json.dumps(lambda_trust_policy)
+        )
+    except botocore.exceptions.ClientError as e:
+        print(e)
+        return role_arn
     with open(iam_policy_file) as f:
         iam_policy = json.load(f)
         for policy_name, value in iam_policy.items():
             print(f"Creating policy {policy_name}")
-            resp = iam.put_role_policy(
-                RoleName=role_name,
-                PolicyName=policy_name,
-                PolicyDocument=json.dumps(value)
-            )
-    return response.get('Role',{}).get('Arn',"")
+            try:
+                resp = iam.put_role_policy(
+                    RoleName=role_name,
+                    PolicyName=policy_name,
+                    PolicyDocument=json.dumps(value)
+                )
+            except botocore.exceptions.ClientError as e:
+                print(e)
+                continue
+    role_arn = response.get('Role',{}).get('Arn',"")
+    return role_arn
 
 def store_policy_in_ssm(region, policy_json_file, name):
     ssm = boto3.client('ssm', config=Config(region_name=region))
     with open(policy_json_file) as f:
         policy_json = json.load(f)
-    ssm.put_parameter(
-        Name=name,
-        Value=json.dumps(policy_json),
-        Type='String',
-        Overwrite=True
-    )
+    try:
+        ssm.put_parameter(
+            Name=name,
+            Value=json.dumps(policy_json),
+            Type='String',
+            Overwrite=True
+        )
+    except botocore.exceptions.ClientError as e:
+        print(e)
+    return
 
 @click.group()
 def prereq():
