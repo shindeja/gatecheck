@@ -4,7 +4,6 @@ poetry.lock
 __pycache__
 specctl.egg-info
 *.csv
-*.txt
 task_policy.json
 lambda_iam_policy.json
 samconfig.toml
