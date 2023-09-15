@@ -45,6 +45,8 @@ sed -e "s/<AWS_ACCOUNT_ID>/$AWS_ACCOUNT_ID/g" \
 
 cp .example_task_policy.json task_policy.json
 ```
+You can open the `lambda_iam_policy.json` to evaluate and adapt the IAM permissions that will be granted to Gatecheck Lambda function. The example we have provided give read access to the resources needed to read and evaluate various task attributes like subnets, ENI/IP. You can also inspect the `task_policy.json` to see what sample policy we are using for this quick start. 
+
 We have included a utility called `prereq.py` which uses `boto3` to create the IAM role for Gatecheck function and to create SSM parameter for storing the task policy. The script stores the output values in `.env` file.
 
 ```bash
@@ -54,7 +56,8 @@ python3 prereq.py iam -f lambda_iam_policy.json -n gatecheck-lambda-iam-role
 python3 prereq.py ssm -f task_policy.json -n ecs-task-policy -r $AWS_REGION
 python3 prereq.py extension -f ssm-lambda-extensions.json -a x86_64 -r $AWS_REGION
 ```
- The above `prereq` commands create and store values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they have old values.
+
+The above `prereq` commands creates and store values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they have old values.
 
 ```bash
 unset GATECHECK_IAM_ROLE
@@ -79,7 +82,7 @@ sam deploy
 If everything is deployed correctly you will see the Lambda function named `gatecheck` in console under AWS Lambda service and you will see an EventBridge rule named `ecs-task-create` in Amazon EventBridge service.
 
 ### Testing 
-If you alreayd have an ECS cluster you can test Gatecheck simply by creating an ECS task. If you don't have an ECS cluster then you can use [AWS Copilot CLI](https://aws.github.io/copilot-cli/) to quickly setup an environment and launch ECS tasks. 
+If you already have an ECS cluster you can test Gatecheck simply by creating an ECS task. If you don't have an ECS cluster then you can use [AWS Copilot CLI](https://aws.github.io/copilot-cli/) to quickly setup an environment and launch ECS tasks. 
 
 Once ECS tasks are created you can check the policy violations (if any) in the AWS console. Go to Lambda service and click on `gatecheck*` function. In the Monitor section click on CloudWatch logs and you will see the policy violations such as below in the log file. 
 ![Policy violation log image](./docs/policy-violation-log.png)
