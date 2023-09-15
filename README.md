@@ -87,6 +87,8 @@ If you already have an ECS cluster you can test Gatecheck simply by creating an 
 Once ECS tasks are created you can check the policy violations (if any) in the AWS console. Go to Lambda service and click on `gatecheck*` function. In the Monitor section click on CloudWatch logs and you will see the policy violations such as below in the log file. 
 ![Policy violation log image](./docs/policy-violation-log.png)
 
+You can also configure Gatecheck to post the violation alerts to webhook; for example, to post to Slack channel. See documentation on [alert](./docs/alert.md) to learn more. 
+
 ### Clean up
 Use the commands below to remove Gatecheck deployed stack, SSM Parameter, and IAM policies that we just created.
 
