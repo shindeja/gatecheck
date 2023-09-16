@@ -61,11 +61,6 @@ def get_policy_from_ssm_parameter(policy_ssm_param_env_var):
     return policy
 
 def lambda_handler(event, context):
-    """
-    Create a lambda function that is triggered 
-    from eventbridge event whenever an ECS task is created
-    print the task ARN and task definition ARN
-    """
     logger.info("Event: {}".format(json.dumps(event)))
     region = event.get("region")
     if region is None:
