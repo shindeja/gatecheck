@@ -84,7 +84,20 @@ If everything is deployed correctly you will see the Lambda function named `gate
 ### Testing 
 If you already have an ECS cluster you can test Gatecheck simply by creating an ECS task. If you don't have an ECS cluster then you can use [AWS Copilot CLI](https://aws.github.io/copilot-cli/) to quickly setup an environment and launch ECS tasks. 
 
-Once ECS tasks are created you can check the policy violations (if any) in the AWS console. Go to Lambda service and click on `gatecheck*` function. In the Monitor section click on CloudWatch logs and you will see the policy violations such as below in the log file. 
+Once ECS tasks are created you can check the policy violations (if any) using SAM logs command. Look for WARNING log levels as shown below.
+
+```bash
+sam logs GateCheckFunction
+...
+...
+2023/09/16/[$LATEST]xxxxx 2023-09-16T01:03:50.020000 2023-09-16 01:03:50,019 [WARNING] task_check: Found policy violation. object: subnet-xxxxx, attribute: subnet, value: public, allowed_values: ['private'], check_type: exact
+2023/09/16/[$LATEST]xxxxx 2023-09-16T01:03:50.164000 2023-09-16 01:03:50,164 [WARNING] task_check: Found policy violation. object: eni-xxxxx, attribute: ip, value: public, allowed_values: ['private'], check_type: exact
+2023/09/16/[$LATEST]xxxxx 2023-09-16T01:03:50.164000 2023-09-16 01:03:50,164 [WARNING] task_check: Found policy violation. object: public.ecr.aws/nginx/nginx:mainline-alpine, attribute: image, value: public.ecr.aws/nginx/nginx:mainline-alpine, allowed_values: ['.*.dkr.ecr.*.amazonaws.com/*'], check_type: pattern
+...
+...
+```
+
+You can also view logs in AWS console. Go to Lambda service and click on `gatecheck*` function. In the Monitor section, click on CloudWatch logs and you will see the policy violations such as below in the log file. 
 ![Policy violation log image](./docs/policy-violation-log.png)
 
 You can also configure Gatecheck to post the violation alerts to webhook; for example, to post to Slack channel. See documentation on [alert](./docs/alert.md) to learn more. 
