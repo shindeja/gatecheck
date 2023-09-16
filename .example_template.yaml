@@ -16,7 +16,7 @@ Resources:
     Properties:
       MemorySize: 1024
       CodeUri: gatecheck
-      Handler: gate_check.lambda_handler
+      Handler: gatecheck.lambda_handler
       Runtime: python3.10
       Role: <GATECHECK_IAM_ROLE>
       Environment:

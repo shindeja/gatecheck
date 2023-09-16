@@ -37,7 +37,7 @@ source .venv/bin/activate
 export AWS_REGION=<your-aws-region>
 export AWS_ACCOUNT_ID=<your-account-id>
 ```
-Next we will create the AWS IAM role for Gatecheck Lambda function and store the Gatecheck task policy in SSM Parameter. Before we do we need to update the IAM policy file with your account and region that you have set above.
+First we need to update the IAM policy file with your account and region that you have set above. 
 
 ```bash
 sed -e "s/<AWS_ACCOUNT_ID>/$AWS_ACCOUNT_ID/g" \
@@ -45,7 +45,7 @@ sed -e "s/<AWS_ACCOUNT_ID>/$AWS_ACCOUNT_ID/g" \
 
 cp .example_task_policy.json task_policy.json
 ```
-You can open the `lambda_iam_policy.json` to evaluate and adapt the IAM permissions that will be granted to Gatecheck Lambda function. The example we have provided give read access to the resources needed to read and evaluate various task attributes like subnets, ENI/IP. You can also inspect the `task_policy.json` to see what sample policy we are using for this quick start. 
+You can open the `lambda_iam_policy.json` to evaluate and adapt the IAM permissions that will be granted to Gatecheck Lambda function. The example we have provided give read access to the resources needed to read and evaluate various task attributes like subnets, network interface, route table. You can also inspect the `task_policy.json` to see what sample policy we are using for this quick start. See [policy](./docs/policy.md) for more details on the Gatecheck ECS task policies.
 
 We have included a utility called `prereq.py` which uses `boto3` to create the IAM role for Gatecheck function and to create SSM parameter for storing the task policy. The script stores the output values in `.env` file.
 
@@ -57,7 +57,7 @@ python3 prereq.py ssm -f task_policy.json -n ecs-task-policy -r $AWS_REGION
 python3 prereq.py extension -f ssm-lambda-extensions.json -a x86_64 -r $AWS_REGION
 ```
 
-The above `prereq` commands creates and store values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they have old values.
+The above `prereq` commands creates and stores values in the `.env` file. We will use those values below to generate the SAM CLI config files for your region, account, IAM, and SSM. Then you use the SAM CLI to deploy Gatecheck Lambda function. We will start by unsetting some environment variables just in case they have old values.
 
 ```bash
 unset GATECHECK_IAM_ROLE
