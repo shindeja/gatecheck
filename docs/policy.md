@@ -10,7 +10,7 @@ The `task` key maps to an array of policy statement. Each policy statement is JS
 * **attribute**: task attribute for which this statement will be applied. That attribute should be exactly those returned by [boto3 ecs describe_tasks](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs/client/describe_tasks.html) function. (See special task attributes section below.)
 * **allowed_values**: list of values allowed for the attribute
 * **type**: specifies what type of check to perform on the attribute value. The type can be:
-    * `exact`: The attribute value should match exactly one of the allowed values
+    * `exact`(default): The attribute value should match exactly one of the allowed values
     * `pattern`: The allowed values will be treated as pattern and attribute value is searched in those patterns using python `re.search` method.
     * `range`: The attribute value should be between the min and max value of the allowed values. For e.g. you can specify that the Fargate task `cpu`` should be between [256, 1024] which will allow 512 but will report violation for 2048.
 * **action**: Currently, the only supported action is `alert`. You can configure a webhook to post [alert](./alert.md). All violations are logged to CloudWatch log associated with the Gatecheck Lambda function.
@@ -45,7 +45,8 @@ There are several task attributes that are nested in multiple other attributes b
 
 | Special attribute | Allowed values | Description |
 | ----------------- | -------------- | ----------- |
-| `subnet`          | `private`, `public`| The task subnet type when using ECS awsvpc mode |
+| `subnet-type`          | `private`, `public`| The task subnet type when using ECS awsvpc mode |
+| `subnet-id`          | strings or patterns | The subnet IDs allowed for task when using ECS awsvpc mode |
 | `ip`              | `private`, `public`| The task IP type when using ECS awsvpc mode |
 | `image`           | strings or patterns | The container images used in task |
 

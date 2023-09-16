@@ -2,8 +2,16 @@ import json
 policy = {
     "task": [
         {
-            "attribute": "subnet",
+            "attribute": "subnet-type",
             "allowed_values": ["private"],
+            "type": "exact",
+            "action": "alert"
+        },
+        {
+            "attribute": "subnet-id",
+            "allowed_values": [
+                "subnet-432190"
+            ],
             "type": "exact",
             "action": "alert"
         },

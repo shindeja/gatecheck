@@ -59,12 +59,21 @@ def task_get_subnets(task):
                      subnets.append(d.get('value'))
     return subnets
 
-def get_subnet_violations(region_name, task, allowed_values):
+def get_subnet_type_violations(region_name, task, allowed_values):
     policy_violations = []
     subnets = task_get_subnets(task)
     for subnet in subnets:
         subnet_type = get_subnet_type(region_name, subnet)
-        pc = PolicyCheck("subnet", subnet_type, allowed_values, "exact", subnet)
+        pc = PolicyCheck("subnet-type", subnet_type, allowed_values, "exact", subnet)
+        if not pc.check():
+            policy_violations.append(pc)
+    return policy_violations
+
+def get_subnet_id_violations(task, allowed_values, check_type):
+    policy_violations = []
+    subnets = task_get_subnets(task)
+    for subnet in subnets:
+        pc = PolicyCheck("subnet-id", subnet, allowed_values, check_type, subnet)
         if not pc.check():
             policy_violations.append(pc)
     return policy_violations
@@ -166,12 +175,15 @@ def enforce_task_policy(region_name, policy, task, task_definition):
         action = p.get('action', '') 
         policy_violations = []
         match attribute:
-            case "subnet":
+            case "subnet-type":
                 if "private" in allowed_values and "public" in allowed_values:
                     logger.info("Both private and public subnets are allowed. Skipping subnet policy check")
                     continue
-                policy_violations = get_subnet_violations(region_name, task, allowed_values)
+                policy_violations = get_subnet_type_violations(region_name, task, allowed_values)
                              
+            case "subnet-id":
+                policy_violations = get_subnet_id_violations(task, allowed_values, check_type)
+
             case "ip":
                 if "private" in allowed_values and "public" in allowed_values:
                     logger.info("Both private and public IPs are allowed. Skipping IP policy check")
